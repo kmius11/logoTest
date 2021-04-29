@@ -11,7 +11,7 @@ def index():
    
     return render_template("index.html")
 
-@app.route("/servicio",methods=["POST"])
+@app.route("https://logovis.azurewebsites.net/servicio",methods=["POST"])
 def servicio():
     usuario=request.form.get("nombre")
     return render_template("servicio.html",nombre=usuario)
