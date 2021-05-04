@@ -1,11 +1,14 @@
 {% extends "layout.html" %}  
 
 {% block body%}
+
 <h1>LoginSmart</h1>
+
 <form action={{ url_for('servicio') }} method="POST">
     <input type="texto" name="nombre" placeholder="ingresa tu usuario">
-    <button>Login</button>
-</form>
-<h1> Video </h1>
+    <input type="submit" name="botn" value="Login"  >
+    <input type="submit" name="botn" value="Registrar"  >
+   
+<h1> Registro Facial </h1>
     <img src='fnRegistro' method="GET">
 {% endblock%}
