@@ -12,8 +12,7 @@ import imutils
 
 app = Flask(__name__)
 
-faceClassif = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalface_default.xml')
-videoStream = VideoStream(src=0).start()
+
 
 #Inicializamos Pagina en index
 @app.route("/")
@@ -51,7 +50,7 @@ def fnRegistro(user):
     print(user)    
     
     return Response(generateFrames(user), mimetype='multipart/x-mixed-replace; boundary=frame')
-      
+    VideoStream.stop()  
 
 
 #Funcion para servicio login
@@ -79,7 +78,9 @@ def servicio():
 
 ##Funcion para proyectar video y registar imagenes.
 def generateFrames(user):
-
+    faceClassif = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalface_default.xml')
+    videoStream = VideoStream(src=0).start()
+    
     usuario=user
     folder="Base"
     folderUsuario=folder+'/'+usuario
@@ -104,7 +105,7 @@ def generateFrames(user):
             count = count +1
             #frame = cv2.imencode('.jpg', frame)[1].tobytes()
             cv2.rectangle(frame,(10,5),(450,25),(255,255,255),-1)
-            cv2.putText(frame,'Registrando rostro.. un momento',(10,20), 2, 0.5,(0,0,0),1,cv2.LINE_AA)
+            cv2.putText(frame,'Registrando rostro por favor no se mueva.. un momento',(10,20), 2, 0.5,(0,0,0),1,cv2.LINE_AA)
             cv2.imshow('frame',frame)              
 
         (flag, encodedImage) = cv2.imencode(".jpg", frame)
@@ -112,9 +113,9 @@ def generateFrames(user):
 
         time.sleep(0.05)
 
-        if count >= 10:
+        if count >= 20:
 	        break
-
+            
 
 if __name__=="__main__":
     app.run(debug = True)
