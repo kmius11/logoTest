@@ -2,19 +2,17 @@ from flask import Flask
 from flask import render_template, redirect, url_for,flash
 from flask import request, Response
 
-
-from imutils.video import VideoStream
-
 import cv2
 import os
 import time
 import imutils
+from imutils.video import VideoStream
 
 app = Flask(__name__)
 
 faceClassif = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalface_default.xml')
 videoStream = VideoStream(src=0).start()
-
+#frame = cv2.VideoCapture(src=0,cv2.CAP_DSHOW)
 #Inicializamos Pagina en index
 @app.route("/")
 
@@ -124,7 +122,7 @@ def generateFrames(user,registro):
 
         frame = videoStream.read()
         #frame = imutils.resize(frame, width=600)
-
+        
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         auxFrame = frame.copy()
         faces = faceClassif.detectMultiScale(gray, 1.3, 5)
