@@ -8,7 +8,7 @@ from imutils.video import VideoStream
 import cv2
 import os
 import time
-#import imutils
+import imutils
 
 app = Flask(__name__)
 
