@@ -59,4 +59,4 @@ jobs:
         with:
           app-name: 'LogoVis'
           slot-name: 'production'
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_4e9320554ef44f4d8cbf2cf92634454d }}
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_37a7edebf1c840e5ab2587e8b3342a66 }}
