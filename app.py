@@ -6,6 +6,7 @@ import cv2
 import os
 import time
 import imutils
+import numpy as np
 from imutils.video import VideoStream
 
 app = Flask(__name__)
@@ -40,11 +41,17 @@ def fnInvitado(nInvitado, Accion,methods=["GET", "POST"]):
                
         print('usuario valido proceda a login facial')
         print('Hola %s!! identificamos tu usuario por favor proceda  a LOGIN FACIAL' % nInvitado)
-       
+        return redirect(url_for('logue',user = nInvitado))
         #Redirigir llamar funcion de login y comparar
         #return redirect(url_for('index'))  
-        return 'LOGIN USUARIO YA REGISTRADO'
-    
+        #return 'LOGIN USUARIO YA REGISTRADO'
+    if nInvitado in archivo and Accion=='LoginFacial':
+               
+        print('Procediendo a LOGINFACIAL')
+        print('Hola %s!! identificamos tu usuario por favor proceda  a LOGIN FACIAL' % nInvitado)
+        return redirect(url_for('RecFacial'))
+        #return redirect(url_for('logue',user = nInvitado))
+
     if nInvitado in archivo and Accion=='Registrar':
         print('no encontrado por favor registrarse')        
         print ('Hola %s !! No identificamos tu usuario, por favor REGISTRESE' % nInvitado)
@@ -52,9 +59,8 @@ def fnInvitado(nInvitado, Accion,methods=["GET", "POST"]):
              #return redirect(url_for('registro'))
             #return redirect(url_for('fnRegistro',user = nInvitado))
              #return Response(generateFrames(nInvitado), mimetype='multipart/x-mixed-replace; boundary=frame')
-    if nInvitado in archivo and Accion=='Login':        
-        return 'USUARIO ENCONTRADO LOGUENADO'
-
+    
+    
     if not nInvitado in archivo and Accion=='Registrar':   
         #return redirect(url_for('index'))
         print('REGISTRANDO')
@@ -81,6 +87,7 @@ def logeo():
 def fnRegistro(user):
     print(user)    
     return Response(generateFrames(user,'reg'), mimetype='multipart/x-mixed-replace; boundary=frame')
+    
 
 #Funcion para servicio login
 @app.route("/servicio",methods=['POST', 'GET'])
@@ -108,16 +115,27 @@ def servicio():
 
 
 ##Funcion para proyectar video y registar imagenes.
+
 def generateFrames(user,registro):
     print('gfram')
     print(registro)
     R=registro 
     usuario=user
     folder="Base"
+    
+    print(usuario)
+    if usuario=='fnRegistro':
+        folder=='Reg'
+    
     folderUsuario=folder+'/'+usuario
+    
+    if not os.path.exists('Reciente'):
+        os.makedirs('Reciente')
+
     if not os.path.exists(folderUsuario):
         os.makedirs(folderUsuario)
     count=0
+    contReci=0
     while True:
 
         frame = videoStream.read()
@@ -132,12 +150,19 @@ def generateFrames(user,registro):
             cv2.rectangle(frame, (x,y),(x+w,y+h),(0,255,0),2)
             rostro = auxFrame[y:y+h,x:x+w]
             rostro = cv2.resize(rostro,(150,150), interpolation=cv2.INTER_CUBIC)                          
-            if usuario!='fnRegistro':
+            
+            
+            if usuario!='fnRegistro' and count<=50:
                 cv2.imwrite(folderUsuario+'/rostro_{}.jpg'.format(count),rostro)
                 count = count +1
+
             #frame = cv2.imencode('.jpg', frame)[1].tobytes()
             cv2.rectangle(frame,(10,5),(450,25),(255,255,255),-1)
             cv2.putText(frame,'Rostro detectado... Por favor ingrese su usuario',(10,20), 2, 0.5,(0,0,0),1,cv2.LINE_AA)
+            while contReci<3:
+                cv2.imwrite('Reciente'+'/rostroAct_{}.jpg'.format(contReci),rostro)
+                contReci= contReci+1
+            contReci=0
             #cv2.imshow('frame',frame)              
 
         (flag, encodedImage) = cv2.imencode(".jpg", frame)
@@ -145,9 +170,93 @@ def generateFrames(user,registro):
 
         time.sleep(0.05)
         
-        if count>=20 and R=='reg':
-            break
-            return 'USUARIO YA REGISTRADO'
+        if count>=50 and R=='reg':
+            
+            print('USUARIO REGISTRADO')
+            break   
+
+        
+    dataPath = 'Base' #Cambia a la ruta donde hayas almacenado Data
+    peopleList = os.listdir(dataPath)
+    print('Lista de personas: ', peopleList)
+
+    labels = []
+    facesData = []
+    label = 0
+
+    for nameDir in peopleList:
+        personPath = dataPath + '/' + nameDir
+        print('Leyendo las imágenes')
+
+        for fileName in os.listdir(personPath):
+            print('Rostros: ', nameDir + '/' + fileName)
+            labels.append(label)
+            facesData.append(cv2.imread(personPath+'/'+fileName,0))
+    
+    
+        label = label + 1
+
+    face_recognizer = cv2.face.LBPHFaceRecognizer_create()
+    print("Entrenando...")
+    face_recognizer.train(facesData, np.array(labels))
+    face_recognizer.write('modelo/modeloLBPHFace.xml')
+    print("Modelo almacenado...")
+#funcion para comparar con LBPHFACE
+@app.route("/machine",methods=["POST", "GET"])
+def RecFacial():
+    dataPath = 'Base' #Cambia a la ruta donde hayas almacenado Data
+    imagePaths = os.listdir(dataPath)
+    print('imagePaths=',imagePaths) 
+    
+    face_recognizer = cv2.face.LBPHFaceRecognizer_create()
+    face_recognizer.read('modelo/modeloLBPHFace.xml')
+    
+    img = cv2.imread("Reciente/rostroAct_0.jpg")
+    img = cv2.resize(img,(150,150),interpolation= cv2.INTER_CUBIC)
+        
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    auxFrame = gray.copy()       
+           
+    result = face_recognizer.predict(auxFrame)
+        
+    print('Resultado',result)
+    print(imagePaths[result[0]])     
+       
+    return 'Ok'
+    
+ 
+#logueo
+@app.route('/logue/<user>',methods=['POST', 'GET'])
+def logue(user):    
+    """Video streaming home page.""" 
+    print('Logue %s'% user)
+
+    return render_template('log.html')    
+    
+def gen():
+    """Video streaming generator function."""
+    #cap = cv2.VideoCapture('768x576.avi')
+    dataPath = 'Base' #Cambia a la ruta donde hayas almacenado Data
+    imagePaths = os.listdir(dataPath)
+    print('imagePathsGen=',imagePaths) 
+          
+    img = cv2.imread("Reciente/rostroAct_0.jpg")
+    img = cv2.resize(img,(150,150),interpolation= cv2.INTER_CUBIC)
+    frame = cv2.imencode('.jpg', img)[1].tobytes()
+    yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+    
+    
+  
+
+
+
+@app.route('/img_feed')
+def img_feed():
+    """Video streaming route. Put this in the src attribute of an img tag."""
+    return Response(gen(),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')    
+    
+    
 
 if __name__=="__main__":
     app.run()

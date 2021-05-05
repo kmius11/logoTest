@@ -1,0 +1,13 @@
+{% extends "layout.html" %}  
+
+{% block body%}
+<h1>SESION LOGIN</h1>
+
+<form action={{ url_for('servicio') }} method="POST">
+    <input type="texto" name="nombre" placeholder="ingresa tu usuario">
+    <input type="submit" name="botn" value="LoginFacial"  >    
+</form>  
+
+<h1> Registro Facial </h1>
+    <img src="{{ url_for('img_feed') }}">
+{% endblock%}
