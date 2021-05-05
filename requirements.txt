@@ -1,4 +1,5 @@
 Flask>=1.0,<=1.1.2
 imutils>=0.5.4
-
+opencv-python>=1.19.5
+numpy
 
