@@ -124,18 +124,26 @@ def generateFrames(user,registro):
     folder="Base"
     
     print(usuario)
-    if usuario=='fnRegistro':
-        folder=='Reg'
-    
+        
     folderUsuario=folder+'/'+usuario
     
     if not os.path.exists('Reciente'):
         os.makedirs('Reciente')
-
+    if usuario =='fnRegistro':
+        folder='Reg'
+        folderUsuario=folder+'/'+usuario
+        if not os.path.exists(folderUsuario):
+            os.makedirs(folderUsuario)
+    else:
+        folder='Base'  
+    folderUsuario=folder+'/'+usuario          
     if not os.path.exists(folderUsuario):
         os.makedirs(folderUsuario)
+        print('se crea folder')
+        print(folderUsuario)
     count=0
     contReci=0
+    
     while True:
 
         frame = videoStream.read()
@@ -245,10 +253,6 @@ def gen():
     frame = cv2.imencode('.jpg', img)[1].tobytes()
     yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
     
-    
-  
-
-
 
 @app.route('/img_feed')
 def img_feed():
