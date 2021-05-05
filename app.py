@@ -11,6 +11,7 @@ from imutils.video import VideoStream
 
 app = Flask(__name__)
 
+
 faceClassif = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalface_default.xml')
 videoStream = VideoStream(src=0).start()
 #frame = cv2.VideoCapture(src=0,cv2.CAP_DSHOW)
@@ -25,6 +26,7 @@ def index():
 @app.route("/Administrador")
 def fnAdmin():
     return 'Hola Administrador'
+
 
 # Definimos una ruta para el Invitado Este usuario se verifica en list
 @app.route('/<nInvitado>/<Accion>')
@@ -49,8 +51,8 @@ def fnInvitado(nInvitado, Accion,methods=["GET", "POST"]):
                
         print('Procediendo a LOGINFACIAL')
         print('Hola %s!! identificamos tu usuario por favor proceda  a LOGIN FACIAL' % nInvitado)
-        return redirect(url_for('RecFacial'))
-        #return redirect(url_for('logue',user = nInvitado))
+        #return redirect(url_for('RecFacial'))
+        return redirect(url_for('RecFacial',user = nInvitado))
 
     if nInvitado in archivo and Accion=='Registrar':
         print('no encontrado por favor registrarse')        
@@ -209,11 +211,15 @@ def generateFrames(user,registro):
     face_recognizer.train(facesData, np.array(labels))
     face_recognizer.write('modelo/modeloLBPHFace.xml')
     print("Modelo almacenado...")
+
 #funcion para comparar con LBPHFACE
-@app.route("/machine",methods=["POST", "GET"])
-def RecFacial():
+@app.route("/machine/<user>",methods=["POST", "GET"])
+def RecFacial(user):
+    invi=user
+    
     dataPath = 'Base' #Cambia a la ruta donde hayas almacenado Data
     imagePaths = os.listdir(dataPath)
+    print('reconociendo rostro %s' %invi)
     print('imagePaths=',imagePaths) 
     
     face_recognizer = cv2.face.LBPHFaceRecognizer_create()
@@ -228,9 +234,16 @@ def RecFacial():
     result = face_recognizer.predict(auxFrame)
         
     print('Resultado',result)
-    print(imagePaths[result[0]])     
-       
-    return 'Ok'
+         
+    print(imagePaths[result[0]])
+    if result[1] < 80 and imagePaths[result[0]]==invi:  
+          
+        invitado=imagePaths[result[0]]
+
+        return('Bienvenido %s a nuestra plataforma' %invitado)      
+    else:
+        print('Desconocido')
+        return('No se logra detectar tu rostro intentalo de nuevo')
     
  
 #logueo
