@@ -3,4 +3,6 @@ imutils>=0.5.4
 opencv-python>=4.5.1.48 
 numpy>=1.13.3
 pip>=20.2.1
+opencv-contrib-python>=4.5.1.48
+opencv-python-headless>=4.5.1.48
 
