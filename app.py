@@ -131,13 +131,15 @@ def generateFrames(user,registro):
     
     if not os.path.exists('Reciente'):
         os.makedirs('Reciente')
-    if usuario =='fnRegistro':
+    
+    if usuario =='fnRegistro'or usuario=='favicon.ico':
         folder='Reg'
         folderUsuario=folder+'/'+usuario
         if not os.path.exists(folderUsuario):
             os.makedirs(folderUsuario)
     else:
         folder='Base'  
+    
     folderUsuario=folder+'/'+usuario          
     if not os.path.exists(folderUsuario):
         os.makedirs(folderUsuario)
@@ -149,9 +151,10 @@ def generateFrames(user,registro):
     while True:
 
         frame = videoStream.read()
-        #frame = imutils.resize(frame, width=600)
+        frame = imutils.resize(frame, width=600)
         
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        
         auxFrame = frame.copy()
         faces = faceClassif.detectMultiScale(gray, 1.3, 5)
 
