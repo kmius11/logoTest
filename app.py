@@ -150,9 +150,10 @@ def generateFrames(user,registro):
     contReci=0
     
     while True:
-        tre,frame = frameCapt.read()
+        
+        ret,frame = frameCapt.read()
         #frame = videoStream.read()
-        frame = imutils.resize(frame, width=min(600,frame.shape[1]))
+        frame = imutils.resize(frame, width=600)
         
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         
@@ -191,7 +192,7 @@ def generateFrames(user,registro):
             
             print('USUARIO REGISTRADO')
             break   
-    frameCapt.release()        
+    #frameCapt.release()        
         
     dataPath = 'Base' #Cambia a la ruta donde hayas almacenado Data
     peopleList = os.listdir(dataPath)
