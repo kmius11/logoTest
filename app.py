@@ -153,7 +153,7 @@ def generateFrames(user,registro):
         
         #ret,frame = frameCapt.read()
         frame = videoStream.read()
-        frame = imutils.resize(frame, width=600,height=400)
+        frame = imutils.resize(frame, width=600,height=400, conts=3)
         #(w, h, c) = frame.shape
         #syntax: cv2.resize(img, (width, height))
         #frame = cv2.resize(frame,(400, h))
