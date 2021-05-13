@@ -13,8 +13,9 @@ app = Flask(__name__)
 
 
 faceClassif = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalface_default.xml')
-videoStream = VideoStream(src=0).start()
-#frame = cv2.VideoCapture(src=0,cv2.CAP_DSHOW)
+#videoStream = VideoStream(src=0).start()
+#frameCapt = cv2.VideoCapture(src=0,cv2.CAP_DSHOW)
+frameCapt = cv2.VideoCapture(0)
 #Inicializamos Pagina en index
 @app.route("/")
 
@@ -124,7 +125,7 @@ def generateFrames(user,registro):
     R=registro 
     usuario=user
     folder="Base"
-    
+    #frameCapt = cv2.VideoCapture(0)
     print(usuario)
         
     folderUsuario=folder+'/'+usuario
@@ -149,8 +150,8 @@ def generateFrames(user,registro):
     contReci=0
     
     while True:
-
-        frame = videoStream.read()
+        tre,frame = frameCapt.read()
+        #frame = videoStream.read()
         frame = imutils.resize(frame, width=600)
         
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -166,8 +167,11 @@ def generateFrames(user,registro):
             
             
             if usuario!='fnRegistro' and count<=50:
-                cv2.imwrite(folderUsuario+'/rostro_{}.jpg'.format(count),rostro)
-                count = count +1
+                #cv2.imwrite(folderUsuario+'/rostro_{}.jpg'.format(count),rostro)
+                #count = count +1
+                if usuario!='favicon.ico' and count<=50:
+                    cv2.imwrite(folderUsuario+'/rostro_{}.jpg'.format(count),rostro)
+                    count = count +1
 
             #frame = cv2.imencode('.jpg', frame)[1].tobytes()
             cv2.rectangle(frame,(10,5),(450,25),(255,255,255),-1)
@@ -187,7 +191,7 @@ def generateFrames(user,registro):
             
             print('USUARIO REGISTRADO')
             break   
-
+    frameCapt.release()        
         
     dataPath = 'Base' #Cambia a la ruta donde hayas almacenado Data
     peopleList = os.listdir(dataPath)
