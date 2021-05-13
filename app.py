@@ -13,9 +13,9 @@ app = Flask(__name__)
 
 
 faceClassif = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalface_default.xml')
-#videoStream = VideoStream(src=0).start()
+videoStream = VideoStream(src=0).start()
 #frameCapt = cv2.VideoCapture(src=0,cv2.CAP_DSHOW)
-frameCapt = cv2.VideoCapture(0)
+#frameCapt = cv2.VideoCapture(0)
 #Inicializamos Pagina en index
 @app.route("/")
 
@@ -151,8 +151,8 @@ def generateFrames(user,registro):
     
     while True:
         
-        ret,frame = frameCapt.read()
-        #frame = videoStream.read()
+        #ret,frame = frameCapt.read()
+        frame = videoStream.read()
         frame = imutils.resize(frame, width=600)
         
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
