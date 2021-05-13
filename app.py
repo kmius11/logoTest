@@ -153,13 +153,15 @@ def generateFrames(user,registro):
         
         #ret,frame = frameCapt.read()
         frame = videoStream.read()
-        frame = imutils.resize(frame, width=600)
-        
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        
+        frame = imutils.resize(frame, width=600,height=400)
+        #(w, h, c) = frame.shape
+        #syntax: cv2.resize(img, (width, height))
+        #frame = cv2.resize(frame,(400, h))
+        #print(w, h)
+        #print(frame.shape)        
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)        
         auxFrame = frame.copy()
         faces = faceClassif.detectMultiScale(gray, 1.3, 5)
-
         for (x,y,w,h) in faces:
 
             cv2.rectangle(frame, (x,y),(x+w,y+h),(0,255,0),2)
