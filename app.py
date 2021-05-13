@@ -152,7 +152,7 @@ def generateFrames(user,registro):
     while True:
         tre,frame = frameCapt.read()
         #frame = videoStream.read()
-        frame = imutils.resize(frame, width=600)
+        frame = imutils.resize(frame, width=min(600,frame.shape[1]))
         
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         
