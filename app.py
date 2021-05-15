@@ -126,6 +126,7 @@ def generateFrames(user,registro):
     usuario=user
     folder="Base"
     #frameCapt = cv2.VideoCapture(0)
+    
     print(usuario)
         
     folderUsuario=folder+'/'+usuario
@@ -153,10 +154,10 @@ def generateFrames(user,registro):
         
         #ret,frame = frameCapt.read()
         frame = videoStream.read()
-        frame = imutils.resize(frame, width=600,height=400, conts=3)
-        #(w, h, c) = frame.shape
+        #frame = imutils.resize(frame, width=600,height=400, conts=3)
+        (w, h, c) = frame.shape
         #syntax: cv2.resize(img, (width, height))
-        #frame = cv2.resize(frame,(400, h))
+        frame = cv2.resize(frame,(h, w))
         #print(w, h)
         #print(frame.shape)        
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)        
