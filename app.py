@@ -2,7 +2,7 @@ from flask import Flask
 from flask import render_template, redirect, url_for,flash
 from flask import request, Response
 
-import cv2
+import cv2 
 import os
 import time
 import imutils
@@ -18,9 +18,7 @@ videoStream = VideoStream(src=0).start()
 #frameCapt = cv2.VideoCapture(0)
 #Inicializamos Pagina en index
 @app.route("/")
-
-def index():
-   
+def index():   
     return render_template("index.html")
 
 #Funcion para el administrador Se pienza darle opciones de entrenar el modelo y conservar los datos.
@@ -28,28 +26,25 @@ def index():
 def fnAdmin():
     return 'Hola Administrador'
 
-
 # Definimos una ruta para el Invitado Este usuario se verifica en list
 @app.route('/<nInvitado>/<Accion>')
 def fnInvitado(nInvitado, Accion,methods=["GET", "POST"]):     
     
     print("Invitado")
     print(nInvitado)
-    print(Accion)
- 
+    print(Accion) 
     pack='Base/'
     archivo= os.listdir(pack)
 
-    if nInvitado in archivo and Accion=='Login':
-               
+    if nInvitado in archivo and Accion=='Login':               
         print('usuario valido proceda a login facial')
         print('Hola %s!! identificamos tu usuario por favor proceda  a LOGIN FACIAL' % nInvitado)
         return redirect(url_for('logue',user = nInvitado))
         #Redirigir llamar funcion de login y comparar
         #return redirect(url_for('index'))  
         #return 'LOGIN USUARIO YA REGISTRADO'
-    if nInvitado in archivo and Accion=='LoginFacial':
-               
+
+    if nInvitado in archivo and Accion=='LoginFacial':               
         print('Procediendo a LOGINFACIAL')
         print('Hola %s!! identificamos tu usuario por favor proceda  a LOGIN FACIAL' % nInvitado)
         #return redirect(url_for('RecFacial'))
@@ -62,8 +57,7 @@ def fnInvitado(nInvitado, Accion,methods=["GET", "POST"]):
              #return redirect(url_for('registro'))
             #return redirect(url_for('fnRegistro',user = nInvitado))
              #return Response(generateFrames(nInvitado), mimetype='multipart/x-mixed-replace; boundary=frame')
-    
-    
+        
     if not nInvitado in archivo and Accion=='Registrar':   
         #return redirect(url_for('index'))
         print('REGISTRANDO')
@@ -73,9 +67,7 @@ def fnInvitado(nInvitado, Accion,methods=["GET", "POST"]):
         #return redirect(url_for('index'))
         return('USUARIO NO ENCONTRADO POR FAVOR REGISTRAR')
         #return redirect(url_for('fnRegistro',user = nInvitado))
-                
-
-
+              
 @app.route("/logeo",methods=["GET", "POST"])
 def logeo():
     if "login" in request.form():
@@ -91,7 +83,6 @@ def fnRegistro(user):
     print(user)    
     return Response(generateFrames(user,'reg'), mimetype='multipart/x-mixed-replace; boundary=frame')
     
-
 #Funcion para servicio login
 @app.route("/servicio",methods=['POST', 'GET'])
 def servicio():
@@ -118,7 +109,6 @@ def servicio():
 
 
 ##Funcion para proyectar video y registar imagenes.
-
 def generateFrames(user,registro):
     print('gfram')
     print(registro)
@@ -189,10 +179,8 @@ def generateFrames(user,registro):
         (flag, encodedImage) = cv2.imencode(".jpg", frame)
         yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
 
-        time.sleep(0.05)
-        
-        if count>=50 and R=='reg':
-            
+        time.sleep(0.05)        
+        if count>=50 and R=='reg':            
             print('USUARIO REGISTRADO')
             break   
     #frameCapt.release()        
@@ -212,9 +200,8 @@ def generateFrames(user,registro):
         for fileName in os.listdir(personPath):
             print('Rostros: ', nameDir + '/' + fileName)
             labels.append(label)
-            facesData.append(cv2.imread(personPath+'/'+fileName,0))
-    
-    
+            facesData.append(cv.imread(personPath+'/'+fileName,0))
+        
         label = label + 1
 
     face_recognizer = cv2.face.LBPHFaceRecognizer_create()
@@ -226,14 +213,14 @@ def generateFrames(user,registro):
 #funcion para comparar con LBPHFACE
 @app.route("/machine/<user>",methods=["POST", "GET"])
 def RecFacial(user):
-    invi=user
-    
+    invi=user    
     dataPath = 'Base' #Cambia a la ruta donde hayas almacenado Data
     imagePaths = os.listdir(dataPath)
     print('reconociendo rostro %s' %invi)
     print('imagePaths=',imagePaths) 
     
-    face_recognizer = cv2.face.LBPHFaceRecognizer_create()
+    
+    face_recognizer =cv2.face.LBPHFaceRecognizer_create()
     face_recognizer.read('modelo/modeloLBPHFace.xml')
     
     img = cv2.imread("Reciente/rostroAct_0.jpg")
@@ -284,10 +271,6 @@ def img_feed():
     return Response(gen(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')    
     
-    
 
 if __name__=="__main__":
     app.run()
-
-
-    
